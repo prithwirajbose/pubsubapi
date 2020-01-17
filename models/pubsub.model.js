@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 function data(data) {
-    // console.log(json);
+    data = _.isArray(data) && data.length > 0 ? data[0] : data;
     return {
         topic: data.topic,
         message: data.message,
