@@ -5,7 +5,7 @@ function data(data) {
     return {
         topic: data.topic,
         message: data.message,
-        timestamp: new Date(data.timestamp)
+        timestamp: (new Date(data.timestamp)).toLocaleString('en-GB', { timeZone: 'UTC' })
     };
 }
 
