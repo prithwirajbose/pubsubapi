@@ -1,31 +1,47 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.3.0",
-  "description": "A sample Node.js app using Express 4",
-  "engines": {
-    "node": "12.x"
-  },
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "test": "node test.js"
-  },
-  "dependencies": {
-    "ejs": "^2.5.6",
-    "express": "^4.15.2"
-  },
-  "devDependencies": {
-    "request": "^2.81.0",
-    "tape": "^4.7.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
-  },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
+    "name": "pubsub-api",
+    "version": "1.0.0",
+    "description": "Publish and Subscribe Data API",
+    "author": "Prithwiraj Bose <sribasu@gmail.com>",
+    "engines": {
+        "node": "12.x"
+    },
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "test": "mocha --timeout 10000"
+    },
+    "dependencies": {
+        "body-parser": "^1.17.2",
+        "bluebird": "~3.7.2",
+        "cors": "^2.8.3",
+        "dotenv": "~8.2.0",
+        "express-validator": "^3.2.0",
+        "request": "^2.81.0",
+        "fast-xml-parser": "^2.6.0",
+        "cookie-parser": "~1.4.3",
+        "debug": "~2.6.0",
+        "express": "~4.15.2",
+        "jade": "~1.11.0",
+        "lodash": "~4.17.15",
+        "serve-favicon": "~2.3.2",
+        "sqlite3": "~4.1.1",
+        "uuid": "~3.4.0"
+    },
+    "devDependencies": {
+        "express": "^4.15.3",
+        "chai": "^3.5.0",
+        "chai-http": "^2.0.1",
+        "mocha": "^3.4.2"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/prithwirajbose/pubsubapi"
+    },
+    "keywords": [
+        "node",
+        "heroku",
+        "express"
+    ],
+    "license": "GNU GPL 3.0"
 }
