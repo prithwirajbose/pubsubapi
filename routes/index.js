@@ -56,5 +56,21 @@ routes.post('/publish', function(req, res) {
     }
 });
 
+routes.post('/subscribe', function(req, res) {
+    if (!checkRequestParamNames(req, res, pubsubController)) {
+        return res;
+    }
+    setupHeader(res);
+
+    if (pubsubController.validateRequest(req, res)) {
+        pubsubController.subscribe(req.body, req, res).then(function(respData) {
+            return res.status(200).json(respData);
+        }).catch(function(err) {
+            console.log(err);
+            errorHandler.appError(res, "An internal error has occured. Please try again.", 500);
+        });
+    }
+});
+
 
 module.exports = routes;
