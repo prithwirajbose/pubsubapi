@@ -1,6 +1,5 @@
 var _ = require('lodash'),
-    fastXmlParser = require('fast-xml-parser');
-var globalErrorMessages = require("../locale/en-US/error-messages.json");
+    globalErrorMessages = require("../locale/en-US/error-messages.json");
 
 const uuidv4 = require('uuid/v4');
 
@@ -73,44 +72,6 @@ module.exports.resolveAppErrorMessage = function(errMsgCd) {
     };
 };
 
-/**
- * Converts XML special characters such as &amp;
- * &lt; to their unescaped versions such as & <
- */
-var restoreXmlSpecialCharsInJson = function(json) {
-    if (typeof(json) == 'string') {
-        //capability to convert json string as well - supplied json is json string
-        json = restoreXmlSpecialCharsInJson(JSON.parse(json));
-    } else if (typeof(json) == 'object') {
-        //when the supplied json is object
-        for (key in json) {
-            //iterate through the keys of json
-            if (json.hasOwnProperty(key)) {
-                if (typeof(_.get(json, key)) == 'string') {
-                    // if current key's datatype is string replace the special chars from the value at
-                    //set it back to the json
-                    var val = _.get(json, key);
-                    val = val.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&apos;/g, "'").replace(/&quot;/g, '"');
-                    json[key] = val;
-                } else if (_.isArray(_.get(json, key))) {
-                    // if current key's datatype is not string recurse inside the value
-                    //recurse to children
-                    var val = restoreXmlSpecialCharsInJson(_.get(json, key));
-                    if (val && !_.isNil(val))
-                        json[key] = val;
-                } else if (typeof(_.get(json, key)) != 'string' && !_.isArray(_.get(json, key)) &&
-                    typeof(_.get(json, key)) != 'undefined') {
-                    // if current key's datatype is not string recurse inside the value
-                    //recurse to children
-                    json[key] = restoreXmlSpecialCharsInJson(_.get(json, key));
-                }
-            }
-        }
-    } else {
-        // do nothing for numeric, boolean etc values
-    }
-    return json;
-};
 
 /**
  * Override of FasterXML parser
@@ -127,5 +88,3 @@ module.exports.setContext = function(req, res, next) {
     });
     return next();
 }
-
-module.exports.parseXmlToJson = parseXmlToJson;

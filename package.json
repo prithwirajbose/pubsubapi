@@ -16,9 +16,8 @@
         "bluebird": "~3.7.2",
         "cors": "^2.8.5",
         "dotenv": "~8.2.0",
-        "express-validator": "^6.3.1",
+        "express-validator": "^3.2.0",
         "request": "^2.88.0",
-        "fast-xml-parser": "^3.16.0",
         "cookie-parser": "~1.4.4",
         "express": "~4.17.1",
         "lodash": "~4.17.15",
@@ -26,7 +25,6 @@
         "uuid": "~3.4.0"
     },
     "devDependencies": {
-        "express": "^4.15.3",
         "chai": "^3.5.0",
         "chai-http": "^2.0.1",
         "mocha": "^3.4.2"
