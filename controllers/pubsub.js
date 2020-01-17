@@ -95,3 +95,4 @@ function createResponse(result, req) {
 module.exports.allowedRequestFields = ["token", "topic", "message"];
 module.exports.validateRequest = validateRequest;
 module.exports.publish = publish;
+module.exports.subscribe = subscribe;
