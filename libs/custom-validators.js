@@ -9,6 +9,9 @@ var injectCustomValidators = function(app) {
             },
             isNotBlank: function(value) {
                 return _.trim(value).length > 0;
+            },
+            isObject: function(value) {
+                return _.isNil(value) || typeof(value) === 'object' || typeof(value) === 'array';
             }
         }
     }));

@@ -29,7 +29,7 @@ function DBService() {
 
 DBService.prototype.save = function(data) {
     var stmt = this.db.prepare("INSERT INTO messages VALUES (?,?,?,?)");
-    stmt.run(data.token, data.topic, data.message, Date.now());
+    stmt.run(data.token, data.topic, JSON.stringify(data.message), Date.now());
     stmt.finalize();
 }
 

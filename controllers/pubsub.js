@@ -37,12 +37,8 @@ function validateRequest(req, res) {
             errorMessage: 'topic is invalid'
         },
         'message': {
-            isString: {
-                errorMessage: 'field-isstring'
-            },
-            isLength: {
-                options: [{ max: 1024 }],
-                errorMessage: 'field-lengthlimit'
+            isObject: {
+                errorMessage: 'field-isobject'
             },
             errorMessage: 'message is invalid'
         }
