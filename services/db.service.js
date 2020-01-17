@@ -33,11 +33,11 @@ DBService.prototype.save = function(data) {
     stmt.finalize();
 }
 
-DBService.prototype.getLast = function(token, topic) {
+DBService.prototype.get = function(token, topic) {
     var that = this;
     return new Promise(function(resolve, reject) {
         that.db.all("SELECT rowid AS id, token, topic, message, timestamp FROM messages " +
-            " ORDER BY rowid DESC limit 1",
+            " where token='" + token + "' and topic='" + topic + "' ORDER BY rowid DESC limit 1",
             function(err, rows) {
                 if (err) {
                     return reject(err);

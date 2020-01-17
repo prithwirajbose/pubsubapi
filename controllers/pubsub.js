@@ -37,14 +37,11 @@ function validateRequest(req, res) {
             errorMessage: 'topic is invalid'
         },
         'message': {
-            isNotBlank: {
-                errorMessage: 'field-required'
-            },
             isString: {
                 errorMessage: 'field-isstring'
             },
             isLength: {
-                options: [{ min: 1, max: 1024 }],
+                options: [{ max: 1024 }],
                 errorMessage: 'field-lengthlimit'
             },
             errorMessage: 'message is invalid'
@@ -72,6 +69,17 @@ function publish(data, req, res) {
         }).catch(function(err) {
             return reject(err);
         });*/
+    })
+
+}
+
+function subscribe(data, req, res) {
+    return new Promise(function(resolve, reject) {
+        dbService.getLast(data.token, data.topic).then(function(msg) {
+            return resolve(createResponse(pubsubModel.data(msg), req));
+        }).catch(function(err) {
+            return reject(err);
+        });
     })
 
 }
