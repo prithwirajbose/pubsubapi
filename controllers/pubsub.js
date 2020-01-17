@@ -75,7 +75,7 @@ function publish(data, req, res) {
 
 function subscribe(data, req, res) {
     return new Promise(function(resolve, reject) {
-        dbService.getLast(data.token, data.topic).then(function(msg) {
+        dbService.get(data.token, data.topic).then(function(msg) {
             return resolve(createResponse(pubsubModel.data(msg), req));
         }).catch(function(err) {
             return reject(err);
