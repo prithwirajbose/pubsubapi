@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Talk v1</title>
+    <link href="https://fonts.googleapis.com/css?family=Rubik&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <style type="text/css">
+        body {
+            font-family: 'Rubik', sans-serif;
+            font-size: 1em;
+            color: #444;
+        }
+        
+        .container {
+            width: 500px;
+            margin: 30px auto;
+        }
+        
+        .content {
+            width: 480px;
+            margin: 30px auto;
+        }
+        
+        .bold {
+            font-weight: bold;
+        }
+        
+        .input {
+            width: 300px;
+            font-size: 1.2em;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+        }
+        
+        .btn {
+            font-size: 1.2em;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+            background: midnightblue;
+            color: white;
+        }
+        
+        .label {
+            margin-bottom: 10px;
+        }
+        
+        .input-container {
+            margin-bottom: 30px;
+        }
+        
+        #msgcontainer {
+            width: 400px;
+            border: 1px solid #bbb;
+            margin: 10px 0px;
+            padding: 10px;
+            background: #eee;
+            border-radius: 5px;
+            -moz-border-radius: 5px;
+            height: 400px;
+            overflow-y: scroll;
+            overflow-x: hidden;
+        }
+        
+        .msg {
+            border: none;
+            margin: 5px 0px;
+            padding: 5px;
+            background: #eee;
+            border-radius: 10px;
+            -moz-border-radius: 10px;
+            background-color: powderblue;
+            display: block;
+            float: left;
+            clear: right;
+        }
+        
+        .mymsg {
+            background-color: darkkhaki;
+            float: right;
+            clear: left;
+        }
+        
+        .clear {
+            clear: both;
+        }
+        
+        #page2 {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Talk v1</h1>
+        <div class="content">
+            <form name="talkform" id="talkform">
+                <div id="page1">
+                    <div class="label">Your Name</div>
+                    <div class="input-container">
+                        <input type="text" name="name" id="name" class="input" />
+                    </div>
+                    <div class="input-container">
+                        <input type="button" name="saveNameBtn" id="saveNameBtn" class="btn" value="Start Talk" />
+                    </div>
+                </div>
+                <div id="page2">
+                    <div class="label bold" id="namelabel"></div>
+                    <div id="msgcontainer"></div>
+                    <div class="clear">&nbsp;</div>
+                    <div class="input-container">
+                        <div style="float:left; clear:right;"><textarea style="height:50px; margin-right:10px;" name="msg" id="msg" class="input" rows="3"></textarea style="line-height:50px;"></div>
+                        <div style="float:left; clear:right;"><input style="line-height:40px; background:darkolivegreen" type="button" name="sendMsgBtn" id="sendMsgBtn" class="btn" value="Send" /></div>
+                        <div style="clear:both">&nbsp;</div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        if (!(localStorage && typeof(localStorage) != 'undefined')) {
+            window.location = 'https://www.google.com';
+        }
+
+        var userName = null;
+        var userId = null;
+
+        function getUid(username) {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16) + username;
+            });
+        }
+
+        function loadMsg() {
+
+        }
+
+        $(document).ready(function(e) {
+            userName = localStorage.getItem('talk_user_name');
+            userId = localStorage.getItem('talk_user_id');
+
+            if (userName && userName != null && $.trim(userName) != '') {
+                $('#namelabel').text('Hi ' + userName);
+                $('#page2').show();
+                $('#page1').hide();
+                setInterval(loadMsg, 1000);
+            } else {
+                $('#saveNameBtn').click(function(e) {
+                    var name = $('#name').val();
+                    if (name && name != null && $.trim(name) != '') {
+                        localStorage.setItem('talk_user_name', $.trim(name));
+                        localStorage.setItem('talk_user_id', getUid($.trim(name)));
+                        userName = $.trim(name);
+                        userId = getUid($.trim(name));
+                        $('#namelabel').text('Hi ' + userName);
+                        $('#page2').show();
+                        $('#page1').hide();
+                        setInterval(loadMsg, 1000);
+                    }
+                });
+            }
+
+        });
+    </script>
+</body>
+
+</html>
