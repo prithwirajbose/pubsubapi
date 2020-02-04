@@ -124,6 +124,9 @@
     </div>
 
     <script type="text/javascript">
+		var globalTopic = 'GroupTalk-Global_Chat';
+		var globalToken = 'grptlk-0H873hHBb72bsS932bdMjd20';
+		
         if (!(localStorage && typeof(localStorage) != 'undefined')) {
             window.location = 'https://www.google.com';
         }
@@ -140,7 +143,16 @@
         }
 
         function loadMsg() {
-
+			$.ajax({
+				url: 'http://pubsubapi.herokuapp.com/subscribe',
+				method: 'POST',
+				datatype: 'JSON',
+				success: function(resp) {
+					if(resp && resp.success && resp.success===true && resp.data && resp.data.topic==globalTopic) {
+						$('#msgcontainer').append('<div class="msg">'++'</div>');
+					}
+				}
+			});
         }
 
         $(document).ready(function(e) {
@@ -167,6 +179,31 @@
                     }
                 });
             }
+			
+			$('#page2').delegate('#sendMsgBtn','click',function(e) {
+				if($.trim($('#msg').text())!=='') {
+					$.ajax({
+						url: 'http://pubsubapi.herokuapp.com/publish',
+						method: 'POST',
+						datatype: 'JSON',
+						data: JSON.stringify({
+							token: globalToken,
+							topic: globalTopic,
+							message: {
+								userId: userId,
+								userName: userName,
+								msgId: ,
+								msgContent:
+							}
+						}),
+						success: function(resp) {
+							if(resp && resp.success && resp.success===true && resp.data && resp.data.topic==globalTopic) {
+								$('#msgcontainer').append('<div class="msg">'++'</div>');
+							}
+						}
+					});
+				}
+			});
 
         });
     </script>
