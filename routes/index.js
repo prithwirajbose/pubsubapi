@@ -3,6 +3,7 @@ const routes = require('express').Router();
 var _ = require('lodash');
 var errorHandler = require('../libs/error-handler.js');
 var pubsubController = require('../controllers/pubsub');
+var path = require('path');
 
 
 function setupHeader(res) {
@@ -34,10 +35,7 @@ function checkRequestParamNames(req, res, controller) {
 }
 
 routes.get('/', function(req, res) {
-    return res.status(200).json({
-        "status": 'success',
-        "results": 'NodeJS API says Hello'
-    });
+     res.sendFile(path.join(__dirname + '/talk.html'));
 });
 
 routes.post('/publish', function(req, res) {
