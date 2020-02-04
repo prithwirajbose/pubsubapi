@@ -35,7 +35,7 @@ function checkRequestParamNames(req, res, controller) {
 }
 
 routes.get('/', function(req, res) {
-     res.sendFile('../talk.html');
+     res.sendFile(path.join(__dirname+ '../talk.html'));
 });
 
 routes.post('/publish', function(req, res) {
