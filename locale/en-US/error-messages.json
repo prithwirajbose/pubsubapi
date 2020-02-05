@@ -3,6 +3,7 @@
         "field-required": "{{paramName}} is required",
         "field-isstring": "{{paramName}} must be a string",
         "field-isobject": "{{paramName}} must be a JSON object",
+        "field-isnumber": "{{paramName}} must be a number",
         "field-lengthlimit": "Length of {{paramName}} doesn't satisfy the criteria.",
         "request-param-not-allowed": "One or more attributes are not allowed in request - {{paramName}}"
     },

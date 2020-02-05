@@ -36,6 +36,13 @@ function validateRequest(req, res) {
             },
             errorMessage: 'topic is invalid'
         },
+        'limit': {
+            optional: true,
+            isNumber: {
+                errorMessage: 'field-isnumber'
+            },
+            errorMessage: 'limit is invalid'
+        },
         'message': {
             isObject: {
                 errorMessage: 'field-isobject'
@@ -71,7 +78,8 @@ function publish(data, req, res) {
 
 function subscribe(data, req, res) {
     return new Promise(function(resolve, reject) {
-        dbService.get(data.token, data.topic).then(function(msg) {
+        var limit = !_.isNil(data.limit) ? data.limit : 0;
+        dbService.get(data.token, data.topic, limit).then(function(msg) {
             return resolve(createResponse(pubsubModel.data(msg), req));
         }).catch(function(err) {
             return reject(err);
