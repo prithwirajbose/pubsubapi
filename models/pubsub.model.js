@@ -21,6 +21,7 @@ function data(rows) {
 
         return {
             topic: data.topic,
+            id: data.id,
             message: msg,
             timestamp: (new Date(data.timestamp)).toLocaleString('en-GB', { timeZone: 'UTC' })
         };

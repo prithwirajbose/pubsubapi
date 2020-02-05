@@ -69,20 +69,31 @@
         .msg {
             border: none;
             margin: 5px 0px;
-            padding: 5px;
+            padding: 5px 25px 5px 10px;
             background: #eee;
             border-radius: 10px;
             -moz-border-radius: 10px;
-            background-color: powderblue;
+            background-color: rgb(161, 210, 221);
             display: block;
             float: left;
-            clear: right;
+            clear: both;
+            text-align: left;
         }
         
         .mymsg {
-            background-color: darkkhaki;
+            background-color: rgb(224, 219, 144);
+            padding: 5px 10px 5px 25px;
             float: right;
-            clear: left;
+            text-align: right;
+        }
+        
+        .msgheader {
+            font-weight: bold;
+            font-size: 0.7em;
+        }
+        
+        .msgbody {
+            font-weight: 1em;
         }
         
         .clear {
@@ -124,8 +135,10 @@
     </div>
 
     <script type="text/javascript">
+        var GLOBAL_HOST = 'http://localhost:5000';//'http://pubsubapi.herokuapp.com';
 		var globalTopic = 'GroupTalk-Global_Chat';
-		var globalToken = 'grptlk-0H873hHBb72bsS932bdMjd20';
+        var globalToken = 'grptlk-0H873hHBb72bsS932bdMjd20';
+        var latestMsgId = 0;
 		
         if (!(localStorage && typeof(localStorage) != 'undefined')) {
             window.location = 'https://www.google.com';
@@ -134,30 +147,66 @@
         var userName = null;
         var userId = null;
 
-        function getUid(username) {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-                var r = Math.random() * 16 | 0,
-                    v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16) + username;
-            });
-        }
-
-        function loadMsg() {
-			$.ajax({
-				url: 'http://pubsubapi.herokuapp.com/subscribe',
-				method: 'POST',
-				datatype: 'JSON',
-				success: function(resp) {
-					if(resp && resp.success && resp.success===true && resp.data && resp.data.topic==globalTopic) {
-						$('#msgcontainer').append('<div class="msg">'++'</div>');
-					}
-				}
-			});
-        }
-
         $(document).ready(function(e) {
             userName = localStorage.getItem('talk_user_name');
             userId = localStorage.getItem('talk_user_id');
+
+            function getUid(username) {
+                return 'xxyxx-xxxx-4xx-yxx-xxyxyx'.replace(/[xy]/g, function (c) {
+                    var r = Math.random() * 16 | 0,
+                        v = c == 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16) + username;
+                });
+            }
+
+            function updateMessages(data) {
+                for(var i=0; i<data.length; i++) {
+                    var o = data[i];
+                    if (o.id && o.topic && o.message && o.topic==globalTopic) {
+                        $('#msgcontainer').append('<div class="msg'+
+                            ((o.message.userId==userId && o.message.userName==userName) ? ' mymsg' : '')
+                            +'" id="msg-' + o.id + '"><div class="msgheader"></div><div class="msgbody"></div></div>');
+                        $('#msg-' + o.id + ' .msgheader').text(o.message.userName);
+                        $('#msg-' + o.id + ' .msgbody').text(o.message.msgContent);
+                        $('#msg-' + o.id + ' .msgbody').html($('#msg-' + o.id + ' .msgbody').html().replace(/\n/g, "<br />"));
+                        latestMsgId = o.id;
+                    }
+                }
+            }
+
+            function loadMsg() {
+                $.ajax({
+                    url: GLOBAL_HOST + '/subscribe',
+                    method: 'POST',
+                    datatype: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        "token": globalToken,
+                        "topic": globalTopic,
+                        "id": latestMsgId > 0 ? latestMsgId : undefined
+                    }),
+                    success: function (resp) {
+                        if (resp && resp.success && resp.success === true && typeof(resp.data)=='object' && resp.data.length > 0) {
+                            updateMessages(resp.data);
+                            $("#msgcontainer").animate({ scrollTop: $('#msgcontainer').prop("scrollHeight") }, 100);
+                        }
+                    }
+                });
+            }
+
+            function saveName(e) {
+                var name = $('#name').val();
+                if (name && name != null && $.trim(name) != '') {
+                    userName = $.trim(name);
+                    userId = getUid(userName.substring(0, 1));
+                    localStorage.setItem('talk_user_name', userName);
+                    localStorage.setItem('talk_user_id', userId);
+                    $('#namelabel').text('Hi ' + userName);
+                    $('#page2').show();
+                    $('#page1').hide();
+                    setInterval(loadMsg, 1000);
+                }
+            }
 
             if (userName && userName != null && $.trim(userName) != '') {
                 $('#namelabel').text('Hi ' + userName);
@@ -166,44 +215,64 @@
                 setInterval(loadMsg, 1000);
             } else {
                 $('#saveNameBtn').click(function(e) {
-                    var name = $('#name').val();
-                    if (name && name != null && $.trim(name) != '') {
-                        localStorage.setItem('talk_user_name', $.trim(name));
-                        localStorage.setItem('talk_user_id', getUid($.trim(name)));
-                        userName = $.trim(name);
-                        userId = getUid($.trim(name));
-                        $('#namelabel').text('Hi ' + userName);
-                        $('#page2').show();
-                        $('#page1').hide();
-                        setInterval(loadMsg, 1000);
+                    saveName(e);
+                });
+                $('#name').keypress(function (e) {
+                    if (e.which == 13 && !e.altKey && !e.shiftKey) {
+                        $('#name').prop('disabled', true);
+                        saveName(e);
+                        e.stopPropagation();
+                        e.preventDefault();
+                        $('#name').prop('disabled', false);
+                        return false;
                     }
                 });
             }
 			
-			$('#page2').delegate('#sendMsgBtn','click',function(e) {
-				if($.trim($('#msg').text())!=='') {
-					$.ajax({
-						url: 'http://pubsubapi.herokuapp.com/publish',
-						method: 'POST',
-						datatype: 'JSON',
-						data: JSON.stringify({
-							token: globalToken,
-							topic: globalTopic,
-							message: {
-								userId: userId,
-								userName: userName,
-								msgId: ,
-								msgContent:
-							}
-						}),
-						success: function(resp) {
-							if(resp && resp.success && resp.success===true && resp.data && resp.data.topic==globalTopic) {
-								$('#msgcontainer').append('<div class="msg">'++'</div>');
-							}
-						}
-					});
-				}
-			});
+            function publish(e, msg) {
+                $('#sendMsgBtn').prop('disabled', true);
+                if (msg !== '') {
+                    $.ajax({
+                        url: GLOBAL_HOST + '/publish',
+                        method: 'POST',
+                        datatype: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            token: globalToken,
+                            topic: globalTopic,
+                            message: {
+                                userId: userId,
+                                userName: userName,
+                                msgContent: msg,
+                            }
+                        }),
+                        complete: function (resp) {
+                            $('#msg').val("");
+                            $('#sendMsgBtn').prop('disabled', false);
+                            $('#msg').focus();
+                        },
+                        error: function (xhr) {
+                            alert("An error has occured");
+                        }
+                    });
+                }
+            }
+            
+            $('body').delegate('#sendMsgBtn','click',function(e) {
+                publish(e, $.trim($('#msg').val()));
+            });
+
+            $('body').delegate('#msg', 'keypress', function (e) {
+                if(e.which==13 && !e.altKey && !e.shiftKey) {
+                    $('#msg').prop('disabled', true);
+                    publish(e, $.trim($('#msg').val()));
+                    e.stopPropagation();
+                    e.preventDefault();
+                    $('#msg').prop('disabled', false);
+                    return false;
+                }
+            });
+            
 
         });
     </script>

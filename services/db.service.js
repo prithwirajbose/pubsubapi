@@ -13,15 +13,6 @@ function DBService() {
             that.db.run("CREATE TABLE IF NOT EXISTS messages (token TEXT, topic TEXT, message TEXT, " +
                 "timestamp INTEGER); CREATE INDEX token_topic_indx on messages (token, topic);");
 
-            /*var stmt = that.db.prepare("INSERT INTO messages VALUES ('abcd',?,'ijklmnopqrst')");
-            for (var i = 0; i < 10; i++) {
-                stmt.run("Topic " + i);
-            }
-            stmt.finalize();
-
-            that.db.each("SELECT rowid AS id, token, topic, message from messages", function(err, row) {
-                console.log(row.id + ": " + row.token + ": " + row.topic + ": " + row.message);
-            });*/
         });
     });
 
@@ -33,11 +24,12 @@ DBService.prototype.save = function(data) {
     stmt.finalize();
 }
 
-DBService.prototype.get = function(token, topic, limit) {
+DBService.prototype.get = function(token, topic, id, limit) {
     var that = this;
     return new Promise(function(resolve, reject) {
+        rowidclause = (id > 0 ? 'rowid >' + id + ' AND' : '');
         that.db.all("SELECT rowid AS id, token, topic, message, timestamp FROM messages " +
-            " where token='" + token + "' and topic='" + topic + "' ORDER BY rowid DESC limit " + (limit > 0 ? limit : 1),
+            " where " + rowidclause + " token='" + token + "' AND topic='" + topic + "' ORDER BY rowid " + (id > 0 ? 'ASC' : 'DESC') + (id > 0 ? "" : " limit " + (limit > 0 ? limit : 1)),
             function(err, rows) {
                 if (err) {
                     return reject(err);

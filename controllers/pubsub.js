@@ -38,10 +38,17 @@ function validateRequest(req, res) {
         },
         'limit': {
             optional: true,
-            isNumber: {
+            isNumeric: {
                 errorMessage: 'field-isnumber'
             },
             errorMessage: 'limit is invalid'
+        },
+        'id': {
+            optional: true,
+            isNumeric: {
+                errorMessage: 'field-isnumber'
+            },
+            errorMessage: 'id is invalid'
         },
         'message': {
             isObject: {
@@ -79,7 +86,8 @@ function publish(data, req, res) {
 function subscribe(data, req, res) {
     return new Promise(function(resolve, reject) {
         var limit = !_.isNil(data.limit) ? data.limit : 0;
-        dbService.get(data.token, data.topic, limit).then(function(msg) {
+        var id = !_.isNil(data.id) ? data.id : 0;
+        dbService.get(data.token, data.topic, id, limit).then(function(msg) {
             return resolve(createResponse(pubsubModel.data(msg), req));
         }).catch(function(err) {
             return reject(err);
@@ -96,7 +104,7 @@ function createResponse(result, req) {
     };
 }
 
-module.exports.allowedRequestFields = ["token", "topic", "message"];
+module.exports.allowedRequestFields = ["token", "topic", "message", "limit", "id"];
 module.exports.validateRequest = validateRequest;
 module.exports.publish = publish;
 module.exports.subscribe = subscribe;
