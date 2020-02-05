@@ -1,20 +1,30 @@
 var _ = require('lodash');
 
-function data(data) {
-    data = _.isArray(data) && data.length > 0 ? data[0] : data;
-    var msg = data.message;
-
-    try {
-        msg = JSON.parse(msg);
-    } catch (e) {
-        //silently ignore
+function data(rows) {
+    if (_.isNil(rows)) {
+        return null;
     }
 
-    return {
-        topic: data.topic,
-        message: msg,
-        timestamp: (new Date(data.timestamp)).toLocaleString('en-GB', { timeZone: 'UTC' })
-    };
+    if (!_.isArray(rows)) {
+        rows = [rows];
+    }
+
+    return _.map(rows, function(data) {
+        data = _.isArray(data) && data.length > 0 ? data[0] : data;
+        var msg = data.message;
+
+        try {
+            msg = JSON.parse(msg);
+        } catch (e) {
+            //silently ignore
+        }
+
+        return {
+            topic: data.topic,
+            message: msg,
+            timestamp: (new Date(data.timestamp)).toLocaleString('en-GB', { timeZone: 'UTC' })
+        };
+    });
 }
 
 module.exports.data = data;
